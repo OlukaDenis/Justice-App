@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Justice App</string>
+    <string name="minimum_password">Password should not be less than 6 characters</string>
+    <string name="auth_failed">Authentication failed</string>
+    <string name="password">Password</string>
+    <string name="sign_up">Sign up</string>
+    <string name="email">Email</string>
+    <string name="register">Register</string>
+    <string name="sign_in">Sign in</string>
 </resources>
