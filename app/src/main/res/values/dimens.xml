@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="large_margin">16dp</dimen>
+    <dimen name="small_margin">8dp</dimen>
+    <dimen name="drawable_padding">5dp</dimen>
+
+    <dimen name="text_and_input_size">18sp</dimen>
+    <dimen name="larger_margin">32dp</dimen>
+</resources>
