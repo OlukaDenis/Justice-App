@@ -1,5 +1,6 @@
 package com.justice.justiceapp;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -7,11 +8,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -22,7 +25,6 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,11 +35,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private static final int RC_SIGN_IN = 433;
     private EditText inputEmail, inputPassword;
     private FirebaseAuth mAuth;
+    private GoogleSignInClient mGoogleSignInClient;
     private ProgressBar progressBar;
     private Button btnLogin;
-    private TextView txt_sign_up;
+    private TextView txt_sign_up, txt_forgot_password;
     private static final String TAG = "Sign in Result";
-    private GoogleSignInClient mGoogleSignInClient;
+    private String emailReset;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +50,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mAuth = FirebaseAuth.getInstance();
 
 
+
+
+
         inputEmail = findViewById(R.id.email);
         inputPassword = findViewById(R.id.password);
         progressBar = findViewById(R.id.progressBar);
         btnLogin = findViewById(R.id.btn_login);
         txt_sign_up = findViewById(R.id.txt_signup);
+        txt_forgot_password = findViewById(R.id.txt_password);
+
+        txt_forgot_password.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ResetPassword();
+            }
+        });
 
         SignInButton signInButton = findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
@@ -67,7 +81,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 
 
-        if (mAuth.getCurrentUser() != null) {
+        if (mAuth.getCurrentUser() != null && mAuth.getCurrentUser().isEmailVerified()) {
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
             finish();
         }
@@ -117,18 +131,67 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                         if (password.length() < 6) {
                                             inputPassword.setError(getString(R.string.minimum_password));
                                         } else {
-                                            Toast.makeText(LoginActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
+                                            Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
                                         }
                                     } else {
-                                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                        startActivity(intent);
-                                        finish();
+                                        if (mAuth.getCurrentUser().isEmailVerified()){
+                                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                            startActivity(intent);
+                                            finish();
+
+                                        }
+                                        else {
+                                            Toast.makeText(LoginActivity.this, "Please verify your email address ", Toast.LENGTH_LONG).show();
+                                        }
+
+
                                     }
                                 }
                             });
                 }
             });
         }
+
+    private void ResetPassword() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(LoginActivity.this);
+        alertDialog.setTitle("Password Reset");
+        alertDialog.setMessage("Enter Email address");
+        final EditText input = new EditText(LoginActivity.this );
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        input.setLayoutParams(lp);
+        alertDialog.setView(input); // uncomment this line
+        alertDialog.setView(input);
+
+        alertDialog.setPositiveButton("Done",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        emailReset = input.getText().toString();
+                        mAuth.sendPasswordResetEmail(emailReset).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()){
+                                    Toast.makeText(LoginActivity.this, "Password Reset Link has been sent to your email", Toast.LENGTH_LONG).show();
+                                }
+                                else
+                                    Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+
+                            }
+                        });
+                    }
+                });
+
+        alertDialog.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+        alertDialog.show();
+    }
 
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
@@ -163,39 +226,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
-        try {
-            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
 
-            // Signed in successfully, show authenticated UI.
-            startActivity(new Intent(LoginActivity.this,MainActivity.class));
-        } catch (ApiException e) {
-            // The ApiException status code indicates the detailed failure reason.
-            // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
-            Toast.makeText(this, "Authentication Failed", Toast.LENGTH_SHORT).show();
-        }
 
-    }
 
-    private void revokeAccess() {
-        // Firebase sign out
-        mAuth.signOut();
-
-        // Google revoke access
-        mGoogleSignInClient.revokeAccess().addOnCompleteListener(this,
-                new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        updateUI(null);
-                    }
-                });
-    }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
         // [START_EXCLUDE silent]
-        progressBar.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
         // [END_EXCLUDE]
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
@@ -235,16 +273,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     progressBar.setVisibility(View.GONE);
     if (user != null) {
 
+        if (user.isEmailVerified()){
+
         Intent intent = new Intent(LoginActivity.this,MainActivity.class);
         startActivity(intent);
-
-        Toast.makeText(this, "Logged in", Toast.LENGTH_SHORT).show();
-
-
-        } else {
-
+            Toast.makeText(this, "Logged in", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(this, "Check your Email for verification link", Toast.LENGTH_SHORT).show();
 
         }
+
+        }
+    else {
+        Intent intent = new Intent(LoginActivity.this,LoginActivity.class);
+        startActivity(intent);
+          }
     }
 
 
