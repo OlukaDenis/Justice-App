@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1034763002932",
+    "firebase_url": "https://justice-project-7f296.firebaseio.com",
+    "project_id": "justice-project-7f296",
+    "storage_bucket": "justice-project-7f296.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1034763002932:android:78ceb33861cb7d2d",
+        "android_client_info": {
+          "package_name": "com.justice.justiceapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1034763002932-3i4e61h002l28b1d2rr3va4nobl6do9s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.justice.justiceapp",
+            "certificate_hash": "057d0fa37ace9bdf2c41b0987c83358ddbfc0f8c"
+          }
+        },
+        {
+          "client_id": "1034763002932-es87dgcsv94c7f7b1m1bdhmd7ciulot9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsOtV-7lMceNViR6B5Z9YBCsJuNuPw-Sk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1034763002932-es87dgcsv94c7f7b1m1bdhmd7ciulot9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

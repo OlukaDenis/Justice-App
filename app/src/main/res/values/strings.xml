@@ -24,4 +24,14 @@
     <string name="text_user_position">Are you a client or a lawyer?</string>
     <string name="string_login_with_google">Login with Google</string>
     <string name="string_login_with_phone">Login with Phone</string>
+    <string name="resend_verification">Resend Verification</string>
+    <string name="minimum_password">Password should not be less than 6 characters</string>
+    <string name="auth_failed">Authentication failed</string>
+    <string name="password">Password</string>
+    <string name="google_signin">Sign in with Google</string>
+    <string name="email">Email</string>
+    <string name="register">Register</string>
+    <string name="sign_in">Sign in</string>
+    <string name="sign_out">Sign out</string>
+    <string name="enter_email_address">Enter email address</string>
 </resources>

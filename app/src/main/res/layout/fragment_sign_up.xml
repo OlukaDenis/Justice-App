@@ -154,6 +154,22 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/signUpEmailInputLayout" />
 
+        <TextView
+            android:id="@+id/txt_resend"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:clickable="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:text="@string/resend_verification"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:fontFamily="sans-serif-condensed"
+            android:textSize="@dimen/text_and_input_size"
+            app:layout_constraintTop_toBottomOf="@+id/buttonSignUp"
+            android:focusable="true" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.core.widget.NestedScrollView>
